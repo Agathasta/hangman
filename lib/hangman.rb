@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'yaml'
+
 class UI
   def initialize
     @loader = Loader.new
@@ -13,18 +15,26 @@ class UI
   end
 
   def ask_load_or_new
+    puts `clear`
+    puts '*** Hangman ***'
     puts 'Do you want to Load a saved game (L) or start a New game (N)?'
     gets.chomp.upcase
   end
 
   def new_game
     @word_list = @loader.load
-    puts 'To save the game, type \'SAVE\' at any point'
     @game = Game.new(@word_list)
   end
 
+  # def load_game
+  #   @game.load_game
+  # end
+
   def load_game
-    # recover -> SAVER
+    saved = File.open("game.yaml", 'r')
+    loaded_game = YAML.load(saved)
+    saved.close
+    @game = loaded_game
   end
 
   def play
@@ -43,18 +53,19 @@ class Loader
   end
 end
 
-class Saver
-  # def recover
-  # jump you exactly back to where the player was when he saved
+class Saver  
   # def save_game
   # serialize your game class!
+  # def recover
+  # jump you exactly back to where the player was when he saved
 end
 
 class Game
   def initialize(word_list)
     @word_list = word_list
     @secret_word = choose_secret_word
-    @display = { counter: 6, incorrect: '' }
+    @counter = 6
+    @incorrect = ''
     @board = (['_'] * @secret_word.length)
   end
 
@@ -63,29 +74,43 @@ class Game
   end
 
   def display_board
-    puts @secret_word
-    puts "COUNTER: #{@display[:counter]}\t INCORRECT GUESSES: #{@display[:incorrect]}"
+    puts `clear`
+    puts '*** Hangman ***'
+    puts 'To save the game, type \'SAVE\' at any point'
+    puts
+    puts "GUESSES REMAINING: #{@counter}\t INCORRECT GUESSES: #{@incorrect}"
     puts @board.join(' ')
   end
 
   def play_round
     display_board
-    guess = ask_letter
-    @display[:counter] -= 1 unless @secret_word.include?(guess)
-    @display[:incorrect] += "#{guess} " unless @secret_word.include?(guess)
-    @board = @board.map.with_index { |l, i| @secret_word[i] == guess ? guess.to_s : l }
+    @guess = ask_letter
+    @guess == 'SAVE' ? save_game : update_display_board
   end
 
   def ask_letter
+    puts
     puts 'Guess a letter:'
     print '> '
     gets.chomp.upcase
   end
 
+  def update_display_board
+    @counter -= 1 unless @secret_word.include?(@guess)
+    @incorrect += "#{@guess} " unless @secret_word.include?(@guess)
+    @board = @board.map.with_index { |l, i| @secret_word[i] == @guess ? @guess.to_s : l }
+  end
+
+  def save_game
+    File.open("game.yaml", 'w') { |file| file.write YAML.dump(self) }
+    exit
+  end
+
   def game_over?
-    return unless (@display[:counter]).zero?
+    return unless (@counter).zero?
 
     puts "GAME OVER, the secret word was #{@secret_word}"
+    puts
     true
   end
 
@@ -94,6 +119,7 @@ class Game
 
     puts @board.join(' ')
     puts 'You are amazing and won!!!'
+    puts
     true
   end
 end
