@@ -33,7 +33,7 @@ class UI
       else
         @game.play_round
       end
-      break if @game.game_over #|| @game.winner
+      break if @game.game_over || @game.winner
     end
   end
 end
@@ -64,7 +64,7 @@ class Game
     @word_list = word_list
     @secret_word = choose_secret_word
     @display = {counter: 7, incorrect: [], correct: [] }
-    @board =  "_ " * @secret_word.length
+    @board =  (["_"] * @secret_word.length)
     display_board
   end
 
@@ -75,15 +75,15 @@ class Game
   def display_board
     puts @secret_word
     puts "COUNTER: #{@display[:counter]}\t INCORRECT GUESSES: #{@display[:incorrect]}\t CORRECT GUESSES: #{@display[:correct]}"
-    puts @board
+    puts @board.join(' ')
   end
 
   def play_round
-    @display[:counter] -= 1
     guess = ask_letter
+    @display[:counter] -= 1 unless @secret_word.include?(guess)
     @display[:correct] << guess if @secret_word.include?(guess)
     @display[:incorrect] << guess unless @secret_word.include?(guess)
-    @board = @secret_word.chars.map {|l| l == guess ? l : "_"}.join(" ") # keep board!!!
+    @board = @board.map.with_index { |l, i| @secret_word[i] == guess ? "#{guess}" : l } # keep board!!!
     display_board
   end
 
@@ -94,9 +94,12 @@ class Game
   end
 
   def game_over
-    @counter == 0
+    @display[:counter] == 1
   end
-  # def winner
+
+  def winner
+    @board.join == @secret_word
+  end
 end
 
 UI.new.start
