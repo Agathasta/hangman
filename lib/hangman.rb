@@ -1,7 +1,15 @@
+# frozen_string_literal: true
+
 class UI
   def initialize
-    @answer_ln = ask_load_or_new
     @loader = Loader.new
+  end
+
+  def start
+    answer_ln = ask_load_or_new until (%w[L N] & [answer_ln]).any?
+    new_game if answer_ln == 'N'
+    load_game if answer_ln == 'L'
+    play
   end
 
   def ask_load_or_new
@@ -9,35 +17,20 @@ class UI
     gets.chomp.upcase
   end
 
-  def ask_save
-    puts 'Press S to save the game, any other key to continue playing'
-    gets.chomp.upcase
+  def new_game
+    @word_list = @loader.load
+    puts 'To save the game, type \'SAVE\' at any point'
+    @game = Game.new(@word_list)
   end
 
-  def start
-    if @answer_ln == 'N'
-      @word_list = @loader.load
-      @game = Game.new(@word_list)
-    # elsif @answer_ln == 'L'
-      # recover -> SAVER
-    end
-    play
+  def load_game
+    # recover -> SAVER
   end
 
   def play
-    loop do
-      ask_save
-      if @answer_s == 'S'
-        puts "save"
-        exit
-      else
-        @game.play_round
-      end
-      break if @game.game_over || @game.winner
-    end
+    @game.play_round until @game.game_over? || @game.winner?
   end
 end
-
 
 class Loader
   def initialize
@@ -46,26 +39,23 @@ class Loader
 
   def load
     File.readlines(@path).select { |line| (5..12).include? line.strip.length }
-      .map { |word| word.strip.upcase }
+        .map { |word| word.strip.upcase }
   end
 end
 
-
 class Saver
   # def recover
-    # jump you exactly back to where the player was when he saved
+  # jump you exactly back to where the player was when he saved
   # def save_game
-    # serialize your game class!
+  # serialize your game class!
 end
-
 
 class Game
   def initialize(word_list)
     @word_list = word_list
     @secret_word = choose_secret_word
-    @display = {counter: 7, incorrect: [], correct: [] }
-    @board =  (["_"] * @secret_word.length)
-    display_board
+    @display = { counter: 6, incorrect: '' }
+    @board = (['_'] * @secret_word.length)
   end
 
   def choose_secret_word
@@ -74,31 +64,37 @@ class Game
 
   def display_board
     puts @secret_word
-    puts "COUNTER: #{@display[:counter]}\t INCORRECT GUESSES: #{@display[:incorrect]}\t CORRECT GUESSES: #{@display[:correct]}"
+    puts "COUNTER: #{@display[:counter]}\t INCORRECT GUESSES: #{@display[:incorrect]}"
     puts @board.join(' ')
   end
 
   def play_round
+    display_board
     guess = ask_letter
     @display[:counter] -= 1 unless @secret_word.include?(guess)
-    @display[:correct] << guess if @secret_word.include?(guess)
-    @display[:incorrect] << guess unless @secret_word.include?(guess)
-    @board = @board.map.with_index { |l, i| @secret_word[i] == guess ? "#{guess}" : l } # keep board!!!
-    display_board
+    @display[:incorrect] += "#{guess} " unless @secret_word.include?(guess)
+    @board = @board.map.with_index { |l, i| @secret_word[i] == guess ? guess.to_s : l }
   end
 
   def ask_letter
-    puts 'Guess'
+    puts 'Guess a letter:'
     print '> '
     gets.chomp.upcase
   end
 
-  def game_over
-    @display[:counter] == 1
+  def game_over?
+    return unless (@display[:counter]).zero?
+
+    puts "GAME OVER, the secret word was #{@secret_word}"
+    true
   end
 
-  def winner
-    @board.join == @secret_word
+  def winner?
+    return unless @board.join == @secret_word
+
+    puts @board.join(' ')
+    puts 'You are amazing and won!!!'
+    true
   end
 end
 
