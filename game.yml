@@ -1,16 +1,15 @@
 --- !ruby/object:Turn
-secret_word: DOSTOEVSKY
-counter: 3
-incorrect: 'A I L '
+secret_word: ADENOIDAL
+counter: 2
+incorrect: 'R T M S '
 board:
+- A
 - _
-- O
-- S
-- _
-- O
 - E
+- N
 - _
-- S
 - _
-- Y
+- _
+- A
+- _
 guess: SAVE
