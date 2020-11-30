@@ -26,15 +26,8 @@ class UI
     @game = Game.new(@word_list)
   end
 
-  # def load_game
-  #   @game.load_game
-  # end
-
   def load_game
-    saved = File.open("game.yaml", 'r')
-    loaded_game = YAML.load(saved)
-    saved.close
-    @game = loaded_game
+    @game = YAML.load(File.open("game.yml", 'r'))
   end
 
   def play
@@ -102,7 +95,7 @@ class Game
   end
 
   def save_game
-    File.open("game.yaml", 'w') { |file| file.write YAML.dump(self) }
+    File.open("game.yml", 'w') { |file| file.write YAML.dump(self) }
     exit
   end
 
