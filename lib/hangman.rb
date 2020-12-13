@@ -3,6 +3,7 @@
 require 'yaml'
 require_relative 'dictionary'
 require_relative 'turn'
+require_relative 'color'
 
 # controls the initial setup of the game
 class Hangman
@@ -14,7 +15,9 @@ class Hangman
     puts `clear`
     puts '*** Hangman Game ***'
     puts
-    puts 'Do you want to Load a saved game (L) or start a New game (N)?'
+    puts 'Do you want to:'
+    puts "\t[N] start a New game"
+    puts "\t[L] Load a saved game"
     print '> '
     gets.chomp.upcase
   end
