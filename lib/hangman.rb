@@ -13,11 +13,11 @@ class Hangman
 
   def ask_load_or_new
     puts `clear`
-    puts '*** Hangman Game ***'
+    puts '  *** Hangman Game ***  '.bg_black.bold
     puts
     puts 'Do you want to:'
-    puts "\t[N] start a New game"
-    puts "\t[L] Load a saved game"
+    puts "\t[N]".gray + ' start a New game'
+    puts "\t[L]".gray + ' Load a saved game'
     print '> '
     gets.chomp.upcase
   end
