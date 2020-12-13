@@ -14,7 +14,7 @@ class Turn
     puts `clear`
     puts '*** Hangman Game ***'
     puts
-    puts 'To save the game, type \'SAVE\' at any point'
+    puts 'To save the game, type [SAVE] at any point'
     puts
     puts "Guesses remaining: #{@counter} of 6"
     puts "Incorrect guesses: #{@incorrect}"
