@@ -12,13 +12,13 @@ class Turn
 
   def display_board
     puts `clear`
-    puts '*** Hangman Game ***'
+    puts '  *** Hangman Game ***  '.bg_black.bold
     puts
-    puts 'To save the game, type [SAVE] at any point'
+    puts 'To save the game, type '+ '[SAVE]'.gray + ' at any point'
     puts
     puts "Guesses remaining: #{@counter} of 6"
-    puts "Incorrect guesses: #{@incorrect}"
-    puts "Correct guesses: #{@board.join(' ')}"
+    puts 'Incorrect guesses: ' + @incorrect.red
+    puts 'Correct guesses: ' + @board.join(' ').green
   end
 
   def play_round
