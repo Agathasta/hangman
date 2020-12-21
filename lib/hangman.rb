@@ -13,7 +13,7 @@ class Hangman
 
   def ask_load_or_new
     puts `clear`
-    puts '  *** Hangman Game ***  '.bg_black.bold
+    puts '  *** Hangman Game ***  '.bg_gray.bold
     puts
     puts 'Do you want to:'
     puts "\t[N]".gray + ' start a New game'
