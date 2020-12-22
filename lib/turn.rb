@@ -14,11 +14,11 @@ class Turn
     puts `clear`
     puts '  *** Hangman Game ***  '.bg_black.bold
     puts
-    puts 'To save the game, type '+ '[SAVE]'.gray + ' at any point'
+    puts 'To save the game, type '+ '[SAVE]'.white + ' at any point'
     puts
     puts "Guesses remaining: #{@counter} of 6"
-    puts 'Incorrect guesses: ' + @incorrect.red
-    puts 'Correct guesses: ' + @board.join(' ').green
+    puts 'Incorrect guesses: ' + @incorrect.bright_red
+    puts 'Correct guesses: ' + @board.join(' ').bright_green
   end
 
   def play_round
@@ -49,7 +49,7 @@ class Turn
     return unless @counter.zero?
 
     puts
-    puts "GAME OVER, the secret word was #{@secret_word}"
+    puts "GAME OVER".white + ", the secret word was #{@secret_word}"
     puts
     true
   end
@@ -59,7 +59,7 @@ class Turn
 
     puts
     puts @board.join(' ')
-    puts 'You are amazing and won!!!'
+    puts 'You are amazing and won!!!'.white
     puts
     true
   end
